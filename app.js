@@ -12,10 +12,10 @@ const videoPlayerSection  =  document.getElementById('videoPlayerSection');
 const mainVideoContainer = document.getElementById('mainVideoContainer');
 
 
-let api_key = "AIzaSyAwtDxYp04PzZLKXKPbDoj87yOjOAJosD0";
+let api_key = "AIzaSyDjr04Z9ZU7laFHcO6hybvbolUQ5mxZ_Ws";
 let video_http = "https://www.googleapis.com/youtube/v3/videos?";
 let channel_http = "https://www.googleapis.com/youtube/v3/channels?";
-
+let search_http = "https://www.googleapis.com/youtube/v3/search?"
 
 
 
@@ -126,3 +126,62 @@ function openVideoPlayer(videoId){
     document.getElementById('video-description').textContent = currentVideoData.snippet.description;
 
 }
+
+
+
+  const searchInput = document.querySelector('.search-bar');
+  const searchbtn = document.querySelector('.search-btn');
+
+  console.log("search input",searchInput.value)
+
+
+  searchbtn.addEventListener('click',()=>{
+    if(searchInput.value.length){
+        searchVideos(searchInput.value)
+    }
+  })
+
+
+  searchbtn.addEventListener('keypress',()=>{
+    if(e.key === 'Enter' &&   searchInput.value.length){
+        searchVideos(searchInput.value)
+    }
+  })
+
+
+  function searchVideos(query){
+      
+
+    videoCardContainer.innerHTML = '';
+
+
+    //reset my UI 
+     videoPlayerSection.style.display = 'none'
+     mainVideoContainer.style.display = 'grid';
+     document.querySelector('.filters').style.display = 'flex';
+
+
+
+     fetch(search_http + new URLSearchParams({
+        key : api_key,
+        part: 'snippet',
+        q:query,
+        maxResults: 20,
+     })).then(res => res.json())
+     .then(data =>{
+        data.items.forEach(item =>{
+            let video = {
+                id: item.id.videoID,
+                snippet:item.snippet
+            };
+            getChannelIcon(video)
+        })
+     }).catch(err => console.log(err))
+
+  }
+
+
+
+
+
+
